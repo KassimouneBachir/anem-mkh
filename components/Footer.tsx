@@ -40,10 +40,10 @@ export default function Footer() {
           <div className={styles.column}>
             <h4 className={styles.heading}>Nous suivre</h4>
             <div className={styles.socialIcons}>
-              <a href="#" className={`${styles.iconLink} ${styles.fb}`}>
+              <a href="https://www.facebook.com/share/14XJYjojCj7/" className={`${styles.iconLink} ${styles.fb}`}>
                 <Facebook size={20} />
               </a>
-              <a href="#" className={`${styles.iconLink} ${styles.insta}`}>
+              <a href="https://www.instagram.com/anem_marrakech?igsh=Y212ZDM5NDE0cWw3" className={`${styles.iconLink} ${styles.insta}`}>
                 <Instagram size={20} />
               </a>
               <a href="mailto:contact@anem.com" className={`${styles.iconLink} ${styles.mail}`}>

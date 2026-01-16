@@ -39,7 +39,8 @@ export default function Dashboard() {
         .single();
 
       if (data) {
-        setProfile(data);
+        // MODIFICATION ICI : On fusionne les données de la DB avec l'email de l'auth
+        setProfile({ ...data, email: user.email });
       } else {
         // Fallback minimal si le profil n'existe pas encore en DB
         setProfile({ 
@@ -137,7 +138,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Carte Email (fixe, vient de l'auth souvent) */}
+          {/* Carte Email (affichera maintenant le vrai email) */}
           <div className={styles.infoCard}>
             <div className={styles.iconBox}>
               <Mail size={24} />
