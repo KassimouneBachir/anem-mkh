@@ -1,0 +1,173 @@
+/* Footer.module.css */
+
+.footer {
+  /* Couleurs locales */
+  --bg-dark: #111827;       /* Gris très foncé */
+  --text-gray: #9ca3af;     /* Gris clair pour le texte */
+  --text-white: #f3f4f6;    /* Blanc cassé pour les titres */
+  --primary-green: #15803d; /* Vert ANEM */
+  --accent-orange: #f97316; /* Orange ANEM */
+  
+  background-color: var(--bg-dark);
+  color: var(--text-gray);
+  padding: 3rem 0 1.5rem 0;
+  border-top: 4px solid var(--primary-green);
+  margin-top: auto; /* Pousse le footer en bas si le contenu est court */
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* --- SECTION HAUTE (Grid) --- */
+.topSection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Identité */
+.brand {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-white);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.5px;
+}
+
+.brandHighlight {
+  color: var(--accent-orange);
+}
+
+.description {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  max-width: 300px;
+}
+
+/* Titres des colonnes */
+.heading {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-white);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Liste des liens */
+.linkList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.link {
+  text-decoration: none;
+  color: var(--text-gray);
+  transition: color 0.3s ease, transform 0.2s ease;
+  font-size: 0.95rem;
+  display: inline-block;
+}
+
+.link:hover {
+  color: var(--primary-green);
+  transform: translateX(4px); /* Petit effet de glissement */
+}
+
+/* Icônes Réseaux Sociaux */
+.socialIcons {
+  display: flex;
+  gap: 1rem;
+}
+
+.iconLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  color: var(--text-white);
+  transition: all 0.3s ease;
+}
+
+/* Couleurs spécifiques au survol */
+.fb:hover { background-color: #1877f2; transform: translateY(-3px); }
+.insta:hover { background-color: #e4405f; transform: translateY(-3px); }
+.mail:hover { background-color: var(--accent-orange); transform: translateY(-3px); }
+
+/* --- SÉPARATEUR --- */
+.separator {
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: 2rem 0;
+}
+
+/* --- SECTION BASSE (Copyright & Signature) --- */
+.bottomSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.85rem;
+}
+
+@media (min-width: 768px) {
+  .bottomSection {
+    flex-direction: row;
+  }
+}
+
+.copyright {
+  color: #6b7280;
+}
+
+/* --- TA SIGNATURE --- */
+.signature {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #6b7280;
+}
+
+.heartIcon {
+  color: #ef4444; /* Rouge */
+  fill: #ef4444;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.devName {
+  color: var(--text-white);
+  text-decoration: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s;
+}
+
+.devName:hover {
+  color: var(--accent-orange);
+  text-decoration: underline;
+}
+
+/* Animation du coeur */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}

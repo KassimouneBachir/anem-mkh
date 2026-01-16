@@ -1,0 +1,92 @@
+/* EventButton.module.css */
+
+/* --- STYLE DE BASE DU BOUTON --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  
+  padding: 10px 24px;
+  border-radius: 50px; /* Forme "Pilule" */
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  
+  cursor: pointer;
+  border: 1px solid transparent; /* Prévient le décalage quand on ajoute une bordure */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 160px; /* Largeur fixe pour éviter que le bouton change de taille */
+}
+
+/* Effet de "clic" (enfoncement) */
+.btn:active {
+  transform: scale(0.96);
+}
+
+/* --- ÉTAT : NON INSCRIT (Orange - Action Principale) --- */
+.unregistered {
+  background-color: #f97316; /* Orange ANEM */
+  color: white;
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.3); /* Ombre portée orange */
+}
+
+.unregistered:hover {
+  background-color: #ea580c; /* Orange plus foncé */
+  transform: translateY(-2px); /* Légère remontée */
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+}
+
+/* --- ÉTAT : INSCRIT (Blanc - Statut) --- */
+.registered {
+  background-color: white;
+  border-color: #e5e7eb; /* Gris clair */
+  color: #16a34a; /* Vert (Check) */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* La magie du changement de texte au survol */
+.textDefault {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.textHover {
+  display: none; /* Caché par défaut */
+  align-items: center;
+  gap: 8px;
+}
+
+/* Quand on survole le bouton "Inscrit" -> Il devient "Danger" */
+.registered:hover {
+  border-color: #fca5a5; /* Bordure rouge clair */
+  background-color: #fef2f2; /* Fond rouge très pâle */
+  color: #dc2626; /* Texte rouge */
+}
+
+/* On cache le texte "Inscrit" et on montre "Se désinscrire" */
+.registered:hover .textDefault {
+  display: none;
+}
+.registered:hover .textHover {
+  display: flex;
+}
+
+/* --- ÉTAT : CHARGEMENT --- */
+.loading {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  cursor: wait;
+  box-shadow: none;
+}
+
+/* Animation du spinner */
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

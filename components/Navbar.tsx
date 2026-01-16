@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image'; // <--- 1. J'ai ajouté l'import ici
 import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { User } from '@supabase/supabase-js';
@@ -17,16 +18,14 @@ export default function Navbar() {
   const pathname = usePathname();
   const profileRef = useRef<HTMLDivElement>(null);
 
-  // Liste des liens centralisée
   const navLinks = [
     { name: 'Accueil', href: '/' },
     { name: 'Guide', href: '/guide' },
     { name: 'Événements', href: '/events' },
-    { name: 'À propos', href: '/about' }, // <-- Ajouté ici
+    { name: 'À propos', href: '/about' },
   ];
 
   useEffect(() => {
-    // Session initiale
     const getInitialSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
@@ -34,13 +33,11 @@ export default function Navbar() {
     };
     getInitialSession();
 
-    // Écouteur de changement d'état
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    // Fermer le dropdown au clic extérieur
     const handleClickOutside = (e: MouseEvent) => {
       if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
         setProfileOpen(false);
@@ -54,7 +51,6 @@ export default function Navbar() {
     };
   }, []);
 
-  // Fermeture automatique lors de la navigation
   useEffect(() => {
     setIsOpen(false);
     setProfileOpen(false);
@@ -73,10 +69,20 @@ export default function Navbar() {
   return (
     <nav className={styles.navContainer}>
       <div className={styles.inner}>
-        {/* LOGO */}
+        {/* LOGO MODIFIÉ ICI */}
         <Link href="/" className={styles.logo}>
-          <span className={styles.logoGreen}>ANEM</span>
-          <span className={styles.logoOrange}>.MKH</span>
+          {/* Assure-toi que ton image s'appelle logo.png dans le dossier public */}
+          <Image 
+            src="/logo.png" 
+            alt="Logo ANEM" 
+            width={40} 
+            height={40} 
+            className={styles.logoImg}
+          />
+          <div className={styles.logoText}>
+            <span className={styles.logoGreen}>ANEM</span>
+            <span className={styles.logoOrange}>.MKH</span>
+          </div>
         </Link>
 
         {/* NAVIGATION DESKTOP */}

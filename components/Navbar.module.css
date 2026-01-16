@@ -2,7 +2,7 @@
 .navContainer {
   --primary-green: #15803d;
   --accent-orange: #f97316;
-  --glass-bg: rgba(255, 255, 255, 0.95); /* Un peu plus opaque pour la lisibilité */
+  --glass-bg: rgba(255, 255, 255, 0.95);
   --border-color: rgba(0, 0, 0, 0.08);
   --text-main: #1f2937;
   --transition-smooth: all 0.3s ease;
@@ -11,7 +11,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 80px;
+  height: 100px;
   background: var(--glass-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -31,14 +31,27 @@
 
 /* --- LOGO --- */
 .logo {
-  font-size: 1.5rem;
-  font-weight: 900;
   text-decoration: none;
-  letter-spacing: -1px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 12px; /* Augmenté un peu pour séparer l'image du texte */
 }
+
+.logoImg {
+   width: 90px;
+    height: 90px; /* <--- 2. C'est ICI que tu gères la taille du logo (essaie 60px, 70px, 80px...) */
+  object-fit: contain;
+  /* Optionnel : ajoute un léger arrondi si ton logo est carré */
+  border-radius: 6px; 
+}
+
+.logoText {
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
 .logoGreen { color: var(--primary-green); }
 .logoOrange { color: var(--accent-orange); }
 
@@ -175,23 +188,21 @@
   color: var(--text-main);
 }
 
-/* Container du menu mobile */
 .mobileMenu {
   position: fixed;
-  top: 80px; /* Juste sous la navbar */
+  top: 80px;
   left: 0;
   width: 100%;
   background: white;
   border-bottom: 1px solid transparent;
   overflow: hidden;
-  max-height: 0; /* Fermé par défaut */
-  transition: max-height 0.4s ease-in-out, border-bottom 0.4s; /* Animation fluide */
+  max-height: 0;
+  transition: max-height 0.4s ease-in-out, border-bottom 0.4s;
   z-index: 999;
 }
 
-/* État ouvert */
 .mobileMenuOpen {
-  max-height: 400px; /* Assez grand pour tout contenir */
+  max-height: 400px;
   border-bottom-color: var(--border-color);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
 }

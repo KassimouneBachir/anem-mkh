@@ -3,113 +3,109 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
-import { Loader2, Check, X } from 'lucide-react';
+import { Check, X, Loader2, UserPlus } from 'lucide-react';
+import styles from './EventButton.module.css';
 
-export default function EventButton({ eventId }: { eventId: string | number }) {
+export default function EventButton({ eventId }: { eventId: any }) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [isRegistered, setIsRegistered] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const [actionBusy, setActionBusy] = useState(false);
 
+  // 1. Vérification au chargement
   useEffect(() => {
-    let mounted = true;
     const checkRegistration = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!mounted) return;
-        if (!user) {
-          setUserId(null);
-          setLoading(false);
-          return;
-        }
-        setUserId(user.id);
-
-        const { data, error } = await supabase
-          .from('event_participants')
-          .select('id')
-          .eq('event_id', eventId)
-          .eq('user_id', user.id)
-          .maybeSingle();
-
-        if (error) throw error;
-        setIsRegistered(!!data);
-      } catch (err) {
-        console.error('checkRegistration', err);
-      } finally {
+      if (!eventId) {
         setLoading(false);
+        return;
       }
+
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+      setUserId(user.id);
+
+      const { data } = await supabase
+        .from('event_participants')
+        .select('*')
+        .eq('event_id', eventId)
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (data) setIsRegistered(true);
+      setLoading(false);
     };
 
     checkRegistration();
-    return () => { mounted = false; };
   }, [eventId]);
 
+  // 2. Action au clic
   const toggleRegistration = async () => {
     if (!userId) {
       router.push('/login');
       return;
     }
 
-    setActionBusy(true);
-    // Optimistic UI
-    setIsRegistered(prev => !prev);
+    setLoading(true);
 
     try {
       if (isRegistered) {
+        // Désinscription
         const { error } = await supabase
           .from('event_participants')
           .delete()
           .eq('event_id', eventId)
           .eq('user_id', userId);
         if (error) throw error;
+        setIsRegistered(false);
       } else {
+        // Inscription
         const { error } = await supabase
           .from('event_participants')
           .insert([{ event_id: eventId, user_id: userId }]);
         if (error) throw error;
+        setIsRegistered(true);
       }
-      // optionally refresh counts
       router.refresh();
-    } catch (err) {
-      // revert optimistic
-      setIsRegistered(prev => !prev);
-      console.error('toggleRegistration', err);
+    } catch (error: any) {
+      console.error("Erreur:", error);
+      alert(`Erreur : ${error.message}`);
     } finally {
-      setActionBusy(false);
+      setLoading(false);
     }
   };
 
-  if (loading) {
-    return (
-      <button className="inline-flex items-center gap-2 px-6 py-2 rounded-lg bg-gray-100 text-gray-500 animate-pulse" disabled>
-        <Loader2 size={16} className="animate-spin" /> Chargement...
-      </button>
-    );
-  }
+  // --- RENDU LOADING ---
+  if (loading) return (
+    <button className={`${styles.btn} ${styles.loading}`} disabled>
+       <Loader2 size={18} className={styles.spinner} /> Chargement...
+    </button>
+  );
 
+  // --- RENDU PRINCIPAL ---
   return (
     <button
       onClick={toggleRegistration}
-      disabled={actionBusy}
-      className={`inline-flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition shadow-md ${
-        isRegistered
-          ? 'bg-red-50 text-red-700 border border-red-100 hover:bg-red-100'
-          : 'bg-gradient-to-r from-orange-500 to-orange-400 text-white hover:from-orange-600 hover:to-orange-500'
-      } ${actionBusy ? 'opacity-80 cursor-wait' : ''}`}
+      // On applique la classe 'registered' ou 'unregistered' selon l'état
+      className={`${styles.btn} ${isRegistered ? styles.registered : styles.unregistered}`}
     >
-      {actionBusy ? (
+      {isRegistered ? (
         <>
-          <Loader2 size={16} className="animate-spin" />
-          {isRegistered ? 'Traitement...' : 'Traitement...'}
-        </>
-      ) : isRegistered ? (
-        <>
-          <X size={16} /> Je ne viens plus
+          {/* Ce span s'affiche par défaut */}
+          <span className={styles.textDefault}>
+            <Check size={18} /> Inscrit(e)
+          </span>
+          {/* Ce span s'affiche uniquement au survol (hover) */}
+          <span className={styles.textHover}>
+            <X size={18} /> Se désinscrire
+          </span>
         </>
       ) : (
         <>
-          <Check size={16} /> ✅ Je participe
+          <UserPlus size={18} /> Je participe
         </>
       )}
     </button>
