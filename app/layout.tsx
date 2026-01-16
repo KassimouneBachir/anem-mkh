@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer"; // <--- 1. Import du footer
+import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,20 +18,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
-      {/* On ajoute 'flex flex-col min-h-screen' au body.
-         Cela permet au site de prendre toute la hauteur,
-         et au Footer de rester tout en bas.
-      */}
+      {/* On ajoute 'flex flex-col min-h-screen' au body pour le layout */}
       <body className={`${inter.className} flex flex-col min-h-screen`}>
         
         <Navbar />
         
-        {/* 'flex-grow' permet au contenu de pousser le footer vers le bas */}
-        <main className="flex-grow">
+        {/* MODIFICATION ICI : Ajout de 'pt-20' */}
+        <main className="flex-grow pt-20">
           {children}
         </main>
         
-        <Footer /> {/* <--- 2. Ajout du footer ici */}
+        <Footer />
         
       </body>
     </html>

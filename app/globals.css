@@ -3,6 +3,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Ajout pour gérer le scroll avec la navbar fixe */
+html {
+  scroll-padding-top: 5rem; /* 5rem correspond à h-20 (80px) */
+}
+
 /* On ajoute juste un fond gris très clair pour tout le site */
 body {
   background-color: #cdcdcd;
