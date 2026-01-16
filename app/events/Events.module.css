@@ -1,0 +1,210 @@
+/* Events.module.css */
+
+.pageContainer {
+  --primary-green: #15803d;
+  --primary-dark: #14532d;
+  --accent-orange: #f97316;
+  --text-main: #1f2937;
+  --text-light: #6b7280;
+  --bg-page: #f8fafc;
+  --white: #ffffff;
+  --card-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  --hover-shadow: 0 20px 40px rgba(0,0,0,0.12);
+
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  padding-bottom: 5rem;
+  font-family: sans-serif; /* Ou ta police personnalisée */
+}
+
+/* --- HERO SECTION --- */
+.hero {
+  text-align: center;
+  padding: 5rem 1.5rem 3rem;
+  background: linear-gradient(180deg, #dcfce7 0%, var(--bg-page) 100%);
+  margin-bottom: 2rem;
+}
+
+.heroTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+}
+
+.heroSubtitle {
+  color: var(--text-light);
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* --- GRID LAYOUT --- */
+.eventsGrid {
+  display: grid;
+  /* Responsive magique : s'adapte automatiquement sans media queries complexes */
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 2.5rem;
+}
+
+/* --- CARTE ÉVÉNEMENT --- */
+.card {
+  background: var(--white);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Effet "rebond" subtil */
+  border: 1px solid rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--hover-shadow);
+}
+
+/* Image Wrapper */
+.imageWrapper {
+  height: 220px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: #e2e8f0;
+}
+
+.eventImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.card:hover .eventImage {
+  transform: scale(1.05); /* Zoom lent sur l'image au survol */
+}
+
+/* Badge Date (Style Calendrier) */
+.dateBadge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  border-radius: 12px;
+  padding: 0.5rem 0.8rem;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  min-width: 60px;
+}
+
+.dateDay {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.dateMonth {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--accent-orange);
+  margin-top: 2px;
+}
+
+/* Contenu Carte */
+.content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+/* Métadonnées (Lieu, Heure) */
+.metaContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.2rem;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-light);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.description {
+  font-size: 0.95rem;
+  color: #4b5563;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Coupe après 3 lignes */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Bouton Action */
+.cardFooter {
+  margin-top: auto;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0.8rem;
+  background: #f1f5f9;
+  color: var(--text-main);
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  background: var(--primary-green);
+  color: white;
+}
+
+.iconArrow {
+  transition: transform 0.3s ease;
+}
+
+.button:hover .iconArrow {
+  transform: translateX(4px);
+}
+
+/* --- EMPTY STATE --- */
+.emptyState {
+  grid-column: 1 / -1; /* Prend toute la largeur */
+  text-align: center;
+  padding: 4rem;
+  background: white;
+  border-radius: 20px;
+  border: 2px dashed #e5e7eb;
+}

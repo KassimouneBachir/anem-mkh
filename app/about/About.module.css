@@ -1,0 +1,288 @@
+/* About.module.css */
+
+.pageContainer {
+  /* Variables de couleurs locales */
+  --primary-green: #15803d;
+  --green-light: #dcfce7;
+  --accent-orange: #f97316;
+  --accent-orange-light: #ffedd5;
+  --accent-blue: #2563eb;
+  --accent-blue-light: #dbeafe;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --bg-page: #f8fafc;
+  --white: #ffffff;
+  
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  position: relative;
+  overflow-x: hidden;
+  padding-bottom: 4rem;
+}
+
+/* Fond décoratif en haut */
+.heroBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 400px;
+  background: linear-gradient(180deg, var(--green-light) 0%, rgba(255,255,255,0) 100%);
+  z-index: 0;
+  opacity: 0.6;
+}
+
+.inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* --- EN-TÊTE --- */
+.headerSection {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  background-color: var(--green-light);
+  color: var(--primary-green);
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 50px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+
+.mainTitle {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+.highlight {
+  color: var(--primary-green);
+}
+
+.subTitle {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* --- CARTE PRÉSIDENT --- */
+.presidentCard {
+  background: var(--white);
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.05);
+  overflow: hidden;
+  margin-bottom: 5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.gradientLine {
+  height: 8px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--primary-green) 0%, var(--accent-orange) 100%);
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Partie Image */
+.imageCol {
+  width: 100%;
+  min-height: 300px;
+  position: relative;
+  background-color: #e2e8f0;
+}
+
+.presidentImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* Partie Texte */
+.textCol {
+  padding: 2rem;
+  position: relative;
+}
+
+.quoteIcon {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  color: var(--green-light);
+  opacity: 0.5;
+  transform: rotate(10deg);
+}
+
+.presidentTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+}
+
+.separator {
+  width: 80px;
+  height: 6px;
+  background-color: var(--accent-orange);
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.textContent {
+  color: #4b5563;
+  line-height: 1.8;
+  font-size: 1.05rem;
+  white-space: pre-line; /* Garde les sauts de ligne de la BDD */
+}
+
+.signature {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.sigName {
+  display: block;
+  font-weight: 800;
+  color: var(--text-main);
+  font-size: 1.1rem;
+}
+
+.sigRole {
+  display: block;
+  color: var(--primary-green);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* --- GRILLE DES VALEURS --- */
+.valuesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.valueCard {
+  background: var(--white);
+  padding: 2rem;
+  border-radius: 20px;
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  cursor: default;
+}
+
+.valueCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+.iconBox {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+/* Variantes de couleurs pour les cartes */
+.cardGreen .iconBox { background: var(--green-light); color: var(--primary-green); }
+.cardGreen:hover .iconBox { background: var(--primary-green); color: var(--white); }
+
+.cardOrange .iconBox { background: var(--accent-orange-light); color: var(--accent-orange); }
+.cardOrange:hover .iconBox { background: var(--accent-orange); color: var(--white); }
+
+.cardBlue .iconBox { background: var(--accent-blue-light); color: var(--accent-blue); }
+.cardBlue:hover .iconBox { background: var(--accent-blue); color: var(--white); }
+
+.cardTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.8rem;
+}
+
+.cardText {
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* --- RESPONSIVE (Desktop) --- */
+@media (min-width: 1024px) {
+  .cardContent {
+    flex-direction: row;
+    min-height: 450px; /* Force une hauteur pour que l'image remplisse */
+  }
+  
+  .imageCol {
+    width: 40%;
+  }
+
+  .presidentImage {
+    position: absolute;
+    height: 100%;
+  }
+  
+  .textCol {
+    width: 60%;
+    padding: 3rem 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .mainTitle { font-size: 3.5rem; }
+  
+  .valuesGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* --- ERREUR --- */
+.errorContainer {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-page);
+}
+.errorCard {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  border: 1px solid #fee2e2;
+}

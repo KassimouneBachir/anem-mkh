@@ -1,0 +1,255 @@
+/* Dashboard.module.css */
+
+.pageContainer {
+  --primary-green: #15803d;
+  --primary-light: #dcfce7;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --bg-page: #f8fafc;
+  --white: #ffffff;
+  --card-radius: 20px;
+  
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  font-family: sans-serif;
+  padding-bottom: 4rem;
+}
+
+/* --- BANNIÈRE DU HAUT --- */
+.banner {
+  height: 220px;
+  background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Petits cercles déco dans la bannière */
+.banner::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 200px;
+  height: 200px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+}
+.banner::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  left: 50px;
+  width: 100px;
+  height: 100px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 50%;
+}
+
+/* --- CONTENEUR PRINCIPAL --- */
+.mainContent {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  position: relative;
+  top: -80px; /* Remonte sur la bannière */
+}
+
+/* --- CARTE PROFIL EN-TÊTE --- */
+.profileHeaderCard {
+  background: var(--white);
+  border-radius: var(--card-radius);
+  padding: 2rem;
+  box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: flex-end;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.avatarWrapper {
+  position: relative;
+  margin-top: -4rem; /* Fait dépasser l'avatar vers le haut */
+}
+
+.avatar {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  border: 5px solid var(--white);
+  object-fit: cover;
+  background-color: #e5e7eb;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.avatarPlaceholder {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  border: 5px solid var(--white);
+  background: linear-gradient(to bottom right, #f3f4f6, #e5e7eb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.profileInfo {
+  flex: 1;
+  min-width: 200px;
+}
+
+.welcomeText {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.userName {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.userRole {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--primary-light);
+  color: var(--primary-green);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.editButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  background-color: #f3f4f6;
+  color: var(--text-main);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.editButton:hover {
+  background-color: #e5e7eb;
+  transform: translateY(-2px);
+}
+
+/* --- GRILLE D'INFOS --- */
+.gridSection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.infoCard {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid rgba(0,0,0,0.05);
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  transition: transform 0.2s;
+}
+
+.infoCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.iconBox {
+  width: 48px;
+  height: 48px;
+  background-color: #f0fdf4;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-green);
+  flex-shrink: 0;
+}
+
+.cardContent h3 {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.cardContent p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* --- BOUTON DECONNEXION --- */
+.logoutWrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.logoutButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: 1px solid #fca5a5;
+  background-color: #fef2f2;
+  color: #b91c1c;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logoutButton:hover {
+  background-color: #fee2e2;
+}
+
+/* --- LOADING --- */
+.loadingContainer {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: var(--primary-green);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .profileHeaderCard {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    padding-top: 0;
+  }
+  
+  .avatarWrapper {
+    margin-top: -65px;
+  }
+  
+  .editButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

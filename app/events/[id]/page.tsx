@@ -2,14 +2,14 @@ import EventButton from "@/components/EventButton";
 import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Calendar, MapPin, Users, ArrowLeft, Clock, Info } from 'lucide-react';
+import styles from './EventDetail.module.css';
 
-// NOTE: Le type de params est maintenant une Promise !
 export default async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
   
-  // 1. On "attend" que les paramètres soient chargés (Spécifique Next.js 15)
   const { id } = await params;
 
-  // 2. Maintenant on peut utiliser 'id' (et pas params.id)
+  // Récupération de l'événement
   const { data: event, error } = await supabase
     .from('events')
     .select('*')
@@ -17,59 +17,118 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
     .single();
 
   if (error || !event) {
-    console.error("Erreur ou événement introuvable:", error);
-    return <div className="p-10 text-center">Événement introuvable (ID: {id})</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-500">
+        Événement introuvable (ID: {id})
+      </div>
+    );
   }
 
-  // On compte le nombre de participants
+  // Nombre de participants
   const { count: participantCount } = await supabase
     .from('event_participants')
     .select('*', { count: 'exact', head: true })
     .eq('event_id', id);
 
-  // Formatage date complet
-  const dateFull = new Date(event.date).toLocaleDateString("fr-FR", {
-    weekday: "long", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit"
-  });
+  // Formatage des dates
+  const dateObj = new Date(event.date);
+  const fullDate = dateObj.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const time = dateObj.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
 
   return (
-    <main className="min-h-screen bg-gray-50 py-10">
-      <div className="container mx-auto px-4 max-w-4xl">
-        <Link href="/events" className="text-gray-500 hover:text-green-700 mb-6 inline-block">
-            ← Retour à l'agenda
-        </Link>
+    <main className={styles.pageWrapper}>
+      
+      {/* --- HERO SECTION --- */}
+      <div className={styles.heroSection}>
+        {event.image_url && (
+          <img src={event.image_url} alt={event.title} className={styles.heroImage} />
+        )}
+        <div className={styles.heroOverlay} />
+        
+        <div className={styles.heroContent}>
+          <Link href="/events" className={styles.backLink}>
+             <ArrowLeft size={18} /> Retour à l'agenda
+          </Link>
 
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-            {/* Bannière */}
-            <div className="h-64 bg-gray-200 w-full relative">
-                {event.image_url && <img src={event.image_url} className="w-full h-full object-cover" />}
-            </div>
+          <h1 className={styles.eventTitle}>{event.title}</h1>
 
-            <div className="p-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">{event.title}</h1>
-                
-                <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-8 border-b pb-8">
-                    <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full font-medium">
-                        📅 {dateFull}
-                    </span>
-                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-medium ml-2">
-                        👥 {participantCount || 0} participants
-                    </span>
-                    <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full font-medium">
-                        📍 {event.location}
-                    </span>
-                </div>
-
-                <div className="prose max-w-none text-gray-700 whitespace-pre-line">
-                    {event.description}
-                </div>
-              
-                {/* Bouton d'action DYNAMIQUE */}
-                <div className="mt-8 pt-8 border-t flex justify-end">
-                    <EventButton eventId={event.id} />
-                </div>
-            </div>
+          <div className={styles.heroBadges}>
+            <span className={`${styles.badge} ${styles.badgeGreen}`}>
+              <Calendar size={16} /> {fullDate}
+            </span>
+            <span className={`${styles.badge} ${styles.badgeOrange}`}>
+              <Users size={16} /> {participantCount || 0} participants
+            </span>
+          </div>
         </div>
+      </div>
+
+      {/* --- CONTENT GRID --- */}
+      <div className={styles.container}>
+        
+        {/* COLONNE GAUCHE : Description */}
+        <div className={styles.contentCard}>
+          <h2 className={styles.sectionTitle}>
+            <Info size={24} color="#15803d" />
+            À propos de l'événement
+          </h2>
+          <div className={styles.descriptionText}>
+            {event.description}
+          </div>
+        </div>
+
+        {/* COLONNE DROITE : Sidebar Infos Sticky */}
+        <aside className={styles.sidebar}>
+          
+          <div className={styles.infoCard}>
+            <h3 className={styles.sectionTitle} style={{fontSize: '1.2rem', marginBottom: '1.5rem'}}>
+              Détails pratiques
+            </h3>
+
+            {/* Date */}
+            <div className={styles.infoRow}>
+              <div className={styles.infoIconBox}><Calendar size={20} /></div>
+              <div className={styles.infoContent}>
+                <h4>Date</h4>
+                <p className="capitalize">{fullDate}</p>
+              </div>
+            </div>
+
+            {/* Heure */}
+            <div className={styles.infoRow}>
+              <div className={styles.infoIconBox}><Clock size={20} /></div>
+              <div className={styles.infoContent}>
+                <h4>Heure</h4>
+                <p>{time}</p>
+              </div>
+            </div>
+
+            {/* Lieu */}
+            <div className={styles.infoRow}>
+              <div className={styles.infoIconBox}><MapPin size={20} /></div>
+              <div className={styles.infoContent}>
+                <h4>Lieu</h4>
+                <p>{event.location}</p>
+              </div>
+            </div>
+            
+            {/* Action Button Component */}
+            <div className={styles.actionWrapper}>
+               {/* Note : Assure-toi que ton composant EventButton a un style 
+                  width: 100% ou block pour remplir l'espace 
+               */}
+               <EventButton eventId={event.id} />
+            </div>
+
+            {/* Fausse carte Google Maps (Déco) */}
+            <div className={styles.mapPlaceholder}>
+              <MapPin size={24} style={{marginRight: 8}} />
+              Carte non disponible
+            </div>
+
+          </div>
+        </aside>
+
       </div>
     </main>
   );

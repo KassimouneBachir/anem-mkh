@@ -1,78 +1,139 @@
 import { supabase } from "@/lib/supabaseClient";
+import { Quote, GraduationCap, HeartHandshake, Globe, AlertCircle } from 'lucide-react';
+import styles from './About.module.css';
 
-// Cette fonction va chercher les données AVANT d'afficher la page
+// --- FONCTION DE RÉCUPÉRATION ---
 async function getPresidentWord() {
   const { data, error } = await supabase
     .from('content_pages')
     .select('*')
-    .eq('slug', 'mot-president') // On cherche spécifiquement cette ligne
-    .single(); // On en veut une seule
+    .eq('slug', 'mot-president')
+    .single();
 
   if (error) {
-    // JSON.stringify permet de forcer l'affichage du contenu de l'erreur
-    console.error("Détail de l'erreur Supabase:", JSON.stringify(error, null, 2));
-    
-    // Vérification des clés (ne les partage pas ici, vérifie juste qu'elles s'affichent)
-    console.log("URL Supabase détectée:", process.env.NEXT_PUBLIC_SUPABASE_URL); 
+    console.error("Erreur Supabase:", JSON.stringify(error, null, 2));
     return null;
   }
   return data;
 }
 
+// --- COMPOSANT PAGE ---
 export default async function AboutPage() {
   const data = await getPresidentWord();
 
+  // --- GESTION ERREUR ---
   if (!data) {
-    return <div className="p-10 text-center">Chargement des données impossible...</div>;
+    return (
+      <div className={styles.errorContainer}>
+        <div className={styles.errorCard}>
+          <AlertCircle size={48} color="#ef4444" style={{ marginBottom: '1rem', margin: '0 auto' }} />
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Oups !</h2>
+          <p style={{ color: '#6b7280' }}>Impossible de charger le contenu pour le moment.</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 py-10">
-      <div className="container mx-auto px-4 max-w-4xl">
+    <main className={styles.pageContainer}>
+      {/* Fond dégradé */}
+      <div className={styles.heroBackground} />
+
+      <div className={styles.inner}>
         
-        {/* En-tête de la page */}
-        <h1 className="text-4xl font-bold text-green-800 mb-8 border-b-2 border-orange-500 pb-2">
-          Qui sommes-nous ?
-        </h1>
+        {/* EN-TÊTE */}
+        <div className={styles.headerSection}>
+          <span className={styles.badge}>À Propos</span>
+          <h1 className={styles.mainTitle}>
+            Qui sommes <span className={styles.highlight}>nous ?</span>
+          </h1>
+          <p className={styles.subTitle}>
+            Découvrez l'association, notre vision et l'équipe qui œuvre pour la communauté nigérienne à Marrakech.
+          </p>
+        </div>
 
-        {/* Bloc Mot du Président */}
-        <div className="bg-white rounded-lg shadow-lg p-8 flex flex-col md:flex-row gap-8 items-start">
+        {/* CARTE PRÉSIDENT */}
+        <div className={styles.presidentCard}>
+          {/* Barre colorée du haut */}
+          <div className={styles.gradientLine} />
           
-          {/* Zone Image (Placeholder si pas d'image) */}
-          <div className="w-full md:w-1/3 flex-shrink-0">
-             {data.image_url ? (
-                <img src={data.image_url} alt="Le Président" className="rounded-lg w-full object-cover shadow-sm" />
-             ) : (
-                <div className="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
-                    Photo du Président
+          <div className={styles.cardContent}>
+            
+            {/* Colonne Image */}
+            <div className={styles.imageCol}>
+              {data.image_url ? (
+                <img 
+                  src={data.image_url} 
+                  alt="Le Président" 
+                  className={styles.presidentImage}
+                />
+              ) : (
+                <div className={styles.imagePlaceholder}>
+                  Photo non disponible
                 </div>
-             )}
-          </div>
+              )}
+            </div>
 
-          {/* Zone Texte */}
-          <div className="w-full md:w-2/3">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">{data.title}</h2>
-            {/* On affiche le texte qui vient de la BD */}
-            <p className="text-gray-600 leading-relaxed whitespace-pre-line">
-              {data.content}
-            </p>
+            {/* Colonne Texte */}
+            <div className={styles.textCol}>
+              <Quote size={60} className={styles.quoteIcon} />
+              
+              <div style={{ position: 'relative', zIndex: 10 }}>
+                <h2 className={styles.presidentTitle}>
+                  {data.title || "Le Mot du Président"}
+                </h2>
+                <div className={styles.separator} />
+                
+                <div className={styles.textContent}>
+                  {data.content}
+                </div>
+
+                <div className={styles.signature}>
+                  <span className={styles.sigName}>Le Président</span>
+                  <span className={styles.sigRole}>ANEM Marrakech</span>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
-        {/* Section Mission (On pourrait aussi la mettre en BD, mais hardcodons pour l'exemple de structure) */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-green-50 p-6 rounded border border-green-200">
-                <h3 className="font-bold text-xl text-green-800 mb-2">🎓 Accompagnement</h3>
-                <p>Aider les étudiants dans leurs démarches administratives et pédagogiques.</p>
+        {/* GRID DES VALEURS */}
+        <div className={styles.valuesGrid}>
+            
+            {/* Carte 1 */}
+            <div className={`${styles.valueCard} ${styles.cardGreen}`}>
+                <div className={styles.iconBox}>
+                    <GraduationCap size={28} />
+                </div>
+                <h3 className={styles.cardTitle}>Accompagnement</h3>
+                <p className={styles.cardText}>
+                    Un soutien constant pour guider chaque étudiant dans ses démarches administratives et sa réussite universitaire.
+                </p>
             </div>
-            <div className="bg-orange-50 p-6 rounded border border-orange-200">
-                <h3 className="font-bold text-xl text-orange-800 mb-2">🤝 Solidarité</h3>
-                <p>Créer un esprit de famille et d'entraide entre tous les nigériens de Marrakech.</p>
+
+            {/* Carte 2 */}
+            <div className={`${styles.valueCard} ${styles.cardOrange}`}>
+                <div className={styles.iconBox}>
+                    <HeartHandshake size={28} />
+                </div>
+                <h3 className={styles.cardTitle}>Solidarité</h3>
+                <p className={styles.cardText}>
+                    Créer un véritable esprit de famille, d'entraide et de fraternité entre tous les nigériens présents à Marrakech.
+                </p>
             </div>
-            <div className="bg-white p-6 rounded border border-gray-200 shadow-sm">
-                <h3 className="font-bold text-xl text-gray-800 mb-2">🌍 Culture</h3>
-                <p>Promouvoir la culture nigérienne au sein du royaume du Maroc.</p>
+
+            {/* Carte 3 */}
+            <div className={`${styles.valueCard} ${styles.cardBlue}`}>
+                <div className={styles.iconBox}>
+                    <Globe size={28} />
+                </div>
+                <h3 className={styles.cardTitle}>Rayonnement</h3>
+                <p className={styles.cardText}>
+                    Promouvoir avec fierté la richesse de la culture nigérienne au sein du Royaume du Maroc.
+                </p>
             </div>
+
         </div>
 
       </div>

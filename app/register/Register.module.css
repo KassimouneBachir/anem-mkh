@@ -1,0 +1,168 @@
+/* Register.module.css */
+
+.pageContainer {
+  --primary-green: #15803d;
+  --primary-dark: #14532d;
+  --accent-orange: #f97316;
+  --bg-page: #f0fdf4;
+  --white: #ffffff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --input-bg: #f9fafb;
+  --input-border: #e5e7eb;
+
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-page);
+  /* Motif subtil différent du login pour varier légèrement */
+  background-image: linear-gradient(135deg, #dcfce7 25%, transparent 25%), 
+                    linear-gradient(225deg, #dcfce7 25%, transparent 25%), 
+                    linear-gradient(45deg, #dcfce7 25%, transparent 25%), 
+                    linear-gradient(315deg, #dcfce7 25%, transparent 25%);
+  background-position: 10px 0, 10px 0, 0 0, 0 0;
+  background-size: 40px 40px;
+  background-repeat: repeat;
+  padding: 1.5rem;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.95); /* Légère transparence */
+  backdrop-filter: blur(10px);
+  width: 100%;
+  max-width: 450px;
+  padding: 2.5rem;
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(21, 128, 61, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--primary-green);
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+/* --- FORMULAIRE AVEC ICONES --- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* L'icône à l'intérieur du champ */
+.inputIcon {
+  position: absolute;
+  left: 16px;
+  color: #9ca3af;
+  pointer-events: none; /* Laisse passer le clic vers l'input */
+  transition: color 0.3s;
+}
+
+.input {
+  width: 100%;
+  padding: 14px 16px 14px 48px; /* Padding gauche plus grand pour laisser place à l'icône */
+  border-radius: 12px;
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  outline: none;
+  color: var(--text-main);
+}
+
+.input:focus {
+  background-color: var(--white);
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 4px rgba(21, 128, 61, 0.1);
+}
+
+/* Quand l'input a le focus, on colorie l'icône aussi */
+.inputWrapper:focus-within .inputIcon {
+  color: var(--primary-green);
+}
+
+/* --- BOUTON --- */
+.submitButton {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: var(--primary-green); /* Vert pour l'inscription */
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(21, 128, 61, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(21, 128, 61, 0.3);
+}
+
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* --- FOOTER --- */
+.footerText {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.link {
+  color: var(--accent-orange);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.link:hover {
+  color: #ea580c;
+  text-decoration: underline;
+}
+
+.errorBox {
+  background-color: #fef2f2;
+  border-left: 4px solid #ef4444;
+  color: #b91c1c;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}

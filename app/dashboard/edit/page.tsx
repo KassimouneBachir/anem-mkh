@@ -3,21 +3,26 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
+import { Camera, Save, X, Loader2, User } from 'lucide-react';
+import styles from './EditProfile.module.css';
 
 export default function EditProfile() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   
-  // Les champs du formulaire
+  // Champs
   const [fullName, setFullName] = useState('');
   const [university, setUniversity] = useState('');
   const [major, setMajor] = useState('');
   const [phone, setPhone] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState(''); // L'URL actuelle
-  const [avatarFile, setAvatarFile] = useState<File | null>(null); // Le nouveau fichier choisi
+  
+  // Gestion Avatar
+  const [avatarUrl, setAvatarUrl] = useState(''); // URL BDD
+  const [previewUrl, setPreviewUrl] = useState(''); // URL temporaire locale
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
-  // 1. Charger les données actuelles
+  // 1. Charger données
   useEffect(() => {
     const getProfile = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -45,7 +50,17 @@ export default function EditProfile() {
     getProfile();
   }, [router]);
 
-  // 2. Fonction pour gérer la sauvegarde
+  // Gestion changement image (Prévisualisation)
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setAvatarFile(file);
+      // Créer une URL locale pour afficher l'image tout de suite
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  // 2. Sauvegarde
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setUpdating(true);
@@ -55,21 +70,21 @@ export default function EditProfile() {
 
     let finalAvatarUrl = avatarUrl;
 
-    // A. Si l'utilisateur a choisi une nouvelle photo, on l'upload
+    // A. Upload Image (si nouveau fichier)
     if (avatarFile) {
-      const fileName = `${user.id}-${Date.now()}`; // Nom unique
-      const { data, error: uploadError } = await supabase.storage
-        .from('avatars') // Nom de ton bucket
+      const fileExt = avatarFile.name.split('.').pop();
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
         .upload(fileName, avatarFile);
 
       if (uploadError) {
-        console.error("Erreur upload:", uploadError);
-        alert("Erreur lors de l'envoi de l'image");
+        alert("Erreur upload image");
         setUpdating(false);
         return;
       }
 
-      // On récupère l'URL publique pour la mettre dans la BDD
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
         .getPublicUrl(fileName);
@@ -77,11 +92,11 @@ export default function EditProfile() {
       finalAvatarUrl = publicUrl;
     }
 
-    // B. On utilise UPSERT (Si ça existe on modifie, sinon on crée)
+    // B. Upsert Profil
     const { error } = await supabase
       .from('profiles')
       .upsert({
-        id: user.id, // INDISPENSABLE pour qu'il sache qui créer/modifier
+        id: user.id,
         full_name: fullName,
         university,
         major,
@@ -90,79 +105,136 @@ export default function EditProfile() {
         updated_at: new Date().toISOString(),
       });
 
-    if (error) {
-      console.error("Erreur Supabase:", error); // Regarde ta console (F12) si ça échoue encore
-      alert("Erreur lors de la sauvegarde : " + error.message);
-    } else {
+    if (!error) {
       router.push('/dashboard');
       router.refresh();
+    } else {
+      alert("Erreur sauvegarde");
     }
     setUpdating(false);
   };
 
-  if (loading) return <div className="p-10 text-center">Chargement...</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-green-700 gap-2">
+        <Loader2 className="animate-spin" /> Chargement...
+      </div>
+    );
+  }
+
+  // L'image à afficher est soit la prévisualisation locale, soit l'url de la BDD
+  const displayImage = previewUrl || avatarUrl;
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6 flex justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-2xl h-fit">
-        <h1 className="text-2xl font-bold text-green-800 mb-6">Modifier mon profil</h1>
+    <main className={styles.pageContainer}>
+      <div className={styles.card}>
+        
+        <div className={styles.header}>
+          <h1 className={styles.title}>Modifier mon profil</h1>
+          <p className={styles.subtitle}>Mettez à jour vos informations personnelles.</p>
+        </div>
 
-        <form onSubmit={handleSave} className="space-y-6">
+        <form onSubmit={handleSave}>
           
-          {/* Section Photo */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Photo de profil</label>
-            <div className="flex items-center gap-4">
-              {/* Prévisualisation */}
-              <div className="h-16 w-16 rounded-full bg-gray-200 overflow-hidden border">
-                {avatarUrl ? (
-                    <img src={avatarUrl} className="h-full w-full object-cover" />
-                ) : (
-                    <span className="flex h-full items-center justify-center text-2xl">👤</span>
-                )}
+          {/* SECTION AVATAR */}
+          <div className={styles.avatarSection}>
+            <label className={styles.avatarWrapper}>
+              {displayImage ? (
+                <img src={displayImage} alt="Avatar" className={styles.avatarImage} />
+              ) : (
+                <div className={styles.avatarPlaceholder}>
+                  <User size={48} />
+                </div>
+              )}
+              
+              {/* Overlay au survol */}
+              <div className={styles.uploadOverlay}>
+                <Camera size={24} />
+                <span className="text-xs font-medium mt-1">Modifier</span>
               </div>
+
+              {/* Input caché */}
               <input 
                 type="file" 
-                accept="image/*"
-                onChange={(e) => setAvatarFile(e.target.files?.[0] || null)}
-                className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                accept="image/*" 
+                className={styles.hiddenInput}
+                onChange={handleImageChange}
+              />
+            </label>
+            <p className={styles.subtitle} style={{marginTop: '10px', fontSize: '0.8rem'}}>
+              Cliquez sur la photo pour changer
+            </p>
+          </div>
+
+          {/* GRILLE DU FORMULAIRE */}
+          <div className={styles.formGrid}>
+            <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
+              <label className={styles.label}>Nom complet</label>
+              <input 
+                type="text" 
+                value={fullName} 
+                onChange={e => setFullName(e.target.value)} 
+                className={styles.input}
+              />
+            </div>
+
+            <div className={styles.inputGroup}>
+              <label className={styles.label}>Téléphone</label>
+              <input 
+                type="tel" 
+                value={phone} 
+                onChange={e => setPhone(e.target.value)} 
+                placeholder="+212 6..."
+                className={styles.input}
+              />
+            </div>
+
+            <div className={styles.inputGroup}>
+              <label className={styles.label}>Université / École</label>
+              <input 
+                type="text" 
+                value={university} 
+                onChange={e => setUniversity(e.target.value)} 
+                placeholder="Ex: Cadi Ayyad"
+                className={styles.input}
+              />
+            </div>
+
+            <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
+              <label className={styles.label}>Filière / Spécialité</label>
+              <input 
+                type="text" 
+                value={major} 
+                onChange={e => setMajor(e.target.value)} 
+                placeholder="Ex: Biologie, Économie..."
+                className={styles.input}
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Nom Complet</label>
-              <input type="text" value={fullName} onChange={e => setFullName(e.target.value)} className="mt-1 w-full p-2 border rounded" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Téléphone</label>
-              <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} className="mt-1 w-full p-2 border rounded" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Université / École</label>
-              <input type="text" value={university} onChange={e => setUniversity(e.target.value)} placeholder="Ex: Cadi Ayyad" className="mt-1 w-full p-2 border rounded" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Filière</label>
-              <input type="text" value={major} onChange={e => setMajor(e.target.value)} placeholder="Ex: Biologie" className="mt-1 w-full p-2 border rounded" />
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-3 pt-4 border-t">
+          {/* ACTIONS */}
+          <div className={styles.actions}>
             <button 
-                type="button" 
-                onClick={() => router.back()}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded transition"
+              type="button" 
+              onClick={() => router.back()}
+              className={styles.cancelButton}
             >
-                Annuler
+              Annuler
             </button>
             <button 
-                type="submit" 
-                disabled={updating}
-                className="px-6 py-2 bg-green-700 text-white font-bold rounded hover:bg-green-800 transition disabled:opacity-50"
+              type="submit" 
+              disabled={updating}
+              className={styles.saveButton}
             >
-                {updating ? 'Enregistrement...' : 'Enregistrer'}
+              {updating ? (
+                <>
+                  <Loader2 className="animate-spin" size={18} /> Enregistrement...
+                </>
+              ) : (
+                <>
+                  <Save size={18} /> Enregistrer
+                </>
+              )}
             </button>
           </div>
 

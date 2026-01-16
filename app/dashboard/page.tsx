@@ -4,6 +4,17 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { 
+  LogOut, 
+  Edit3, 
+  GraduationCap, 
+  Phone, 
+  MapPin, 
+  Mail, 
+  CheckCircle2, 
+  Loader2 
+} from 'lucide-react';
+import styles from './Dashboard.module.css';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -12,15 +23,15 @@ export default function Dashboard() {
 
   useEffect(() => {
     const getProfile = async () => {
-      // 1. On récupère l'utilisateur connecté
+      // 1. Check User
       const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) {
-        router.push('/login'); // Si pas connecté -> Ouste !
+        router.push('/login');
         return;
       }
 
-      // 2. On va chercher ses infos dans la table 'profiles'
+      // 2. Fetch Profile
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -30,8 +41,11 @@ export default function Dashboard() {
       if (data) {
         setProfile(data);
       } else {
-        // Si pas de profil trouvé (cas des vieux comptes), on garde au moins l'email du user
-        setProfile({ email: user.email, full_name: user.user_metadata.full_name });
+        // Fallback minimal si le profil n'existe pas encore en DB
+        setProfile({ 
+          email: user.email, 
+          full_name: user.user_metadata.full_name || 'Utilisateur' 
+        });
       }
       
       setLoading(false);
@@ -42,62 +56,117 @@ export default function Dashboard() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.push('/login'); // Redirection après déconnexion
-    router.refresh(); // Force la mise à jour de la Navbar
+    router.push('/login');
+    router.refresh(); 
   };
 
-  if (loading) return <div className="p-10 text-center text-green-700">Chargement de ton profil...</div>;
+  if (loading) {
+    return (
+      <div className={styles.loadingContainer}>
+        <Loader2 className="animate-spin" size={48} />
+        <p>Chargement de ton espace...</p>
+      </div>
+    );
+  }
+
+  // Si l'utilisateur n'a pas mis d'avatar, on affiche ses initiales ou un emoji
+  const hasAvatar = profile?.avatar_url;
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6 md:p-12">
-      <div className="container mx-auto max-w-3xl">
+    <main className={styles.pageContainer}>
+      
+      {/* 1. Bannière Décorative */}
+      <div className={styles.banner}></div>
+
+      <div className={styles.mainContent}>
         
-        {/* Carte de Profil */}
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
-          <div className="bg-green-700 h-32 w-full"></div> {/* Bandeau vert déco */}
+        {/* 2. Carte Principale (Header) */}
+        <div className={styles.profileHeaderCard}>
           
-          <div className="px-8 pb-8">
-            <div className="relative flex justify-between items-end -mt-12 mb-6">
-              {/* Avatar (Rond gris si pas d'image) */}
-              <div className="h-24 w-24 rounded-full border-4 border-white bg-gray-200 flex items-center justify-center text-3xl shadow-md">
-                {profile?.avatar_url ? (
-                  <img src={profile.avatar_url} alt="Avatar" className="h-full w-full rounded-full object-cover" />
-                ) : (
-                  <span>👤</span>
-                )}
+          <div className={styles.avatarWrapper}>
+            {hasAvatar ? (
+              <img 
+                src={profile.avatar_url} 
+                alt="Avatar" 
+                className={styles.avatar} 
+              />
+            ) : (
+              <div className={styles.avatarPlaceholder}>
+                👋
               </div>
-              
-              {/* BOUTON EDITER (On le codera juste après) */}
-              <Link href="/dashboard/edit" className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition">
-                ✏️ Modifier
-              </Link>
-            </div>
+            )}
+          </div>
 
-            <h1 className="text-3xl font-bold text-gray-900">{profile?.full_name || 'Étudiant Anonyme'}</h1>
-            <p className="text-green-600 font-medium">
-              {profile?.major ? `${profile.major} à ${profile.university}` : 'Filière non renseignée'}
-            </p>
-
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                <p className="text-xs text-gray-500 uppercase font-bold">Téléphone</p>
-                <p className="text-gray-800">{profile?.phone || 'Non renseigné'}</p>
-              </div>
-              <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                <p className="text-xs text-gray-500 uppercase font-bold">Statut</p>
-                <p className="text-gray-800">Membre Actif ✅</p>
-              </div>
+          <div className={styles.profileInfo}>
+            <p className={styles.welcomeText}>Espace Membre</p>
+            <h1 className={styles.userName}>{profile?.full_name || 'Étudiant'}</h1>
+            
+            <div className={styles.userRole}>
+              <CheckCircle2 size={14} /> Membre vérifié
             </div>
           </div>
+
+          <Link href="/dashboard/edit" className={styles.editButton}>
+            <Edit3 size={18} /> Modifier mon profil
+          </Link>
         </div>
 
-        {/* Zone Danger / Déconnexion */}
-        <div className="flex justify-end">
-          <button 
-            onClick={handleLogout}
-            className="flex items-center gap-2 bg-red-50 text-red-600 px-6 py-3 rounded-lg hover:bg-red-100 transition border border-red-200 font-medium"
-          >
-            🚪 Se déconnecter
+        {/* 3. Grille d'informations */}
+        <div className={styles.gridSection}>
+          
+          {/* Carte Université */}
+          <div className={styles.infoCard}>
+            <div className={styles.iconBox}>
+              <GraduationCap size={24} />
+            </div>
+            <div className={styles.cardContent}>
+              <h3>Études</h3>
+              <p>{profile?.major || 'Filière non renseignée'}</p>
+              <p className="text-sm text-gray-500 font-normal">{profile?.university || 'Université non renseignée'}</p>
+            </div>
+          </div>
+
+          {/* Carte Contact */}
+          <div className={styles.infoCard}>
+            <div className={styles.iconBox}>
+              <Phone size={24} />
+            </div>
+            <div className={styles.cardContent}>
+              <h3>Téléphone</h3>
+              <p>{profile?.phone || 'Non renseigné'}</p>
+            </div>
+          </div>
+
+          {/* Carte Email (fixe, vient de l'auth souvent) */}
+          <div className={styles.infoCard}>
+            <div className={styles.iconBox}>
+              <Mail size={24} />
+            </div>
+            <div className={styles.cardContent}>
+              <h3>Email</h3>
+              <p className="text-sm md:text-base break-all">
+                {profile?.email || 'email@exemple.com'}
+              </p>
+            </div>
+          </div>
+
+           {/* Carte Adresse (Optionnel) */}
+           <div className={styles.infoCard}>
+            <div className={styles.iconBox}>
+              <MapPin size={24} />
+            </div>
+            <div className={styles.cardContent}>
+              <h3>Ville</h3>
+              <p>Marrakech</p>
+            </div>
+          </div>
+
+        </div>
+
+        {/* 4. Zone Danger */}
+        <div className={styles.logoutWrapper}>
+          <button onClick={handleLogout} className={styles.logoutButton}>
+            <LogOut size={18} /> Se déconnecter
           </button>
         </div>
 

@@ -1,86 +1,128 @@
 import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
+import { Calendar, MapPin, Clock, ArrowRight, PartyPopper } from 'lucide-react';
+import styles from './Events.module.css';
+
+// Type pour TypeScript (optionnel mais recommandé)
+type EventType = {
+  id: string;
+  title: string;
+  date: string;
+  location: string;
+  description: string;
+  image_url: string | null;
+};
 
 export default async function EventsPage() {
-  // 1. Récupérer les événements
-  // .order('date', { ascending: true }) -> Trie du plus proche au plus lointain
+  // 1. Récupération des données
   const { data: events, error } = await supabase
     .from('events')
     .select('*')
     .order('date', { ascending: true });
 
-  if (error) console.error("Erreur events:", error);
+  if (error) console.error("Erreur fetching events:", error);
 
   return (
-    <main className="min-h-screen bg-gray-50 py-10">
-      <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold text-green-800 mb-8 text-center">
-          📅 Agenda de l'ANEM
-        </h1>
+    <main className={styles.pageContainer}>
+      
+      {/* HERO SECTION */}
+      <div className={styles.hero}>
+        <h1 className={styles.heroTitle}>📅 Agenda de l'ANEM</h1>
+        <p className={styles.heroSubtitle}>
+          Retrouvez tous les événements passés et à venir de la communauté nigérienne à Marrakech.
+        </p>
+      </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {events?.map((event) => {
-            // 2. Formatage de la date en Français propre
+      <div className={styles.container}>
+        
+        {/* GRILLE D'ÉVÉNEMENTS */}
+        <div className={styles.eventsGrid}>
+          {events?.map((event: EventType) => {
             const dateObj = new Date(event.date);
-            const dateLisible = dateObj.toLocaleDateString("fr-FR", {
-              weekday: "long",
-              day: "numeric",
-              month: "long",
-            });
-            const heureLisible = dateObj.toLocaleTimeString("fr-FR", {
-              hour: "2-digit",
-              minute: "2-digit",
+            
+            // Formatage pour le badge calendrier
+            const dayNumber = dateObj.toLocaleDateString("fr-FR", { day: "numeric" });
+            const monthShort = dateObj.toLocaleDateString("fr-FR", { month: "short" });
+            
+            // Formatage pour l'heure
+            const timeString = dateObj.toLocaleTimeString("fr-FR", { 
+              hour: "2-digit", minute: "2-digit" 
             });
 
             return (
-              <div key={event.id} className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 flex flex-col">
+              <article key={event.id} className={styles.card}>
                 
-                {/* Image ou Placeholder coloré */}
-                <div className="h-48 bg-green-100 relative">
+                {/* ZONE IMAGE */}
+                <div className={styles.imageWrapper}>
                   {event.image_url ? (
-                    <img src={event.image_url} alt={event.title} className="w-full h-full object-cover" />
+                    <img 
+                      src={event.image_url} 
+                      alt={event.title} 
+                      className={styles.eventImage} 
+                    />
                   ) : (
-                    <div className="flex items-center justify-center h-full text-green-800 font-bold text-4xl opacity-20">
-                      ANEM
+                    // Placeholder si pas d'image
+                    <div style={{ 
+                      width: '100%', height: '100%', 
+                      background: 'linear-gradient(45deg, #15803d, #14532d)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: 'white', opacity: 0.8 
+                    }}>
+                      <Calendar size={48} />
                     </div>
                   )}
-                  {/* Badge Date flottant */}
-                  <div className="absolute top-4 right-4 bg-white px-3 py-1 rounded-full text-sm font-bold text-orange-500 shadow-sm">
-                    {dateLisible}
+
+                  {/* BADGE DATE FLOTTANT */}
+                  <div className={styles.dateBadge}>
+                    <span className={styles.dateDay}>{dayNumber}</span>
+                    <span className={styles.dateMonth}>{monthShort}</span>
                   </div>
                 </div>
 
-                <div className="p-6 flex flex-col flex-grow">
-                  <h2 className="text-xl font-bold text-gray-800 mb-2">{event.title}</h2>
+                {/* ZONE CONTENU */}
+                <div className={styles.content}>
+                  <h2 className={styles.title}>{event.title}</h2>
                   
-                  <div className="text-sm text-gray-500 mb-4 space-y-1">
-                    <p className="flex items-center">
-                      🕒 <span className="ml-2">{heureLisible}</span>
-                    </p>
-                    <p className="flex items-center">
-                      📍 <span className="ml-2">{event.location}</span>
-                    </p>
+                  <div className={styles.metaContainer}>
+                    <div className={styles.metaItem}>
+                      <Clock size={16} color="#f97316" />
+                      <span>{timeString}</span>
+                    </div>
+                    <div className={styles.metaItem}>
+                      <MapPin size={16} color="#15803d" />
+                      <span>{event.location}</span>
+                    </div>
                   </div>
 
-                  <p className="text-gray-600 line-clamp-3 mb-6 flex-grow">
+                  <p className={styles.description}>
                     {event.description}
                   </p>
 
-                  <Link 
-                    href={`/events/${event.id}`} 
-                    className="block w-full text-center bg-green-700 text-white font-semibold py-2 rounded hover:bg-green-800 transition"
-                  >
-                    Voir détails
-                  </Link>
+                  <div className={styles.cardFooter}>
+                    <Link href={`/events/${event.id}`} className={styles.button}>
+                      Voir les détails 
+                      <ArrowRight size={18} className={styles.iconArrow} />
+                    </Link>
+                  </div>
                 </div>
-              </div>
+
+              </article>
             );
           })}
-        </div>
 
-        {(!events || events.length === 0) && (
-          <p className="text-center text-gray-500 mt-10">Aucun événement prévu pour le moment.</p>
-        )}
+          {/* EMPTY STATE (Si aucun événement) */}
+          {(!events || events.length === 0) && (
+            <div className={styles.emptyState}>
+              <PartyPopper size={64} color="#94a3b8" style={{ margin: '0 auto 1rem' }} />
+              <h3 style={{ fontSize: '1.5rem', color: '#374151', marginBottom: '0.5rem' }}>
+                Aucun événement pour le moment
+              </h3>
+              <p style={{ color: '#6b7280' }}>
+                Revenez plus tard pour découvrir les prochaines activités de l'ANEM !
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </main>
   );

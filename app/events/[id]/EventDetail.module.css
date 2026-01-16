@@ -1,0 +1,235 @@
+/* EventDetail.module.css */
+
+.pageWrapper {
+  --primary-green: #15803d;
+  --text-dark: #111827;
+  --text-gray: #4b5563;
+  --bg-page: #f8fafc;
+  --white: #ffffff;
+  --radius-lg: 24px;
+  --shadow-card: 0 10px 40px -10px rgba(0,0,0,0.1);
+
+  background-color: var(--bg-page);
+  min-height: 100vh;
+  padding-bottom: 4rem;
+  font-family: sans-serif;
+}
+
+/* --- HERO SECTION (Haut de page) --- */
+.heroSection {
+  position: relative;
+  height: 50vh; /* Prend la moitié de l'écran */
+  min-height: 400px;
+  width: 100%;
+  background-color: #000;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 4rem;
+}
+
+.heroImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.7; /* Assombrit l'image pour lire le texte */
+}
+
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 60%);
+  z-index: 1;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  color: white;
+}
+
+.backLink {
+  position: absolute;
+  top: -80px; /* Remonte le bouton retour */
+  left: 2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 50px;
+  transition: all 0.3s;
+}
+
+.backLink:hover {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  transform: translateX(-4px);
+}
+
+.eventTitle {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.heroBadges {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+}
+
+.badgeGreen { background: rgba(22, 163, 74, 0.9); color: white; }
+.badgeOrange { background: rgba(249, 115, 22, 0.9); color: white; }
+
+/* --- MAIN GRID LAYOUT --- */
+.container {
+  max-width: 1200px;
+  margin: -60px auto 0; /* Remonte sur le hero pour l'effet carte */
+  padding: 0 2rem;
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* 2/3 texte, 1/3 sidebar */
+  gap: 3rem;
+}
+
+/* --- COLONNE GAUCHE (Description) --- */
+.contentCard {
+  background: var(--white);
+  padding: 3rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.descriptionText {
+  color: var(--text-gray);
+  line-height: 1.8;
+  font-size: 1.05rem;
+  white-space: pre-line;
+}
+
+/* --- COLONNE DROITE (Sticky Sidebar) --- */
+.sidebar {
+  position: sticky;
+  top: 100px; /* Colle au haut de l'écran quand on scrolle */
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.infoCard {
+  background: var(--white);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.infoRow {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: flex-start;
+}
+
+.infoIconBox {
+  width: 40px;
+  height: 40px;
+  background: #f3f4f6;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--primary-green);
+}
+
+.infoContent h4 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: #9ca3af;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.infoContent p {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  line-height: 1.4;
+}
+
+.mapPlaceholder {
+  width: 100%;
+  height: 150px;
+  background: #e5e7eb;
+  border-radius: 12px;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+/* Container du bouton d'action */
+.actionWrapper {
+  margin-top: 1rem;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 900px) {
+  .heroSection { height: 400px; }
+  .eventTitle { font-size: 2rem; }
+  
+  .container {
+    grid-template-columns: 1fr; /* Une seule colonne */
+    margin-top: -40px;
+    gap: 2rem;
+  }
+  
+  .sidebar {
+    position: static; /* Plus de sticky sur mobile */
+    order: -1; /* Met la sidebar (infos) AVANT la description sur mobile */
+  }
+
+  .backLink { top: -60px; left: 1rem; }
+}

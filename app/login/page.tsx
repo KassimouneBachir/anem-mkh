@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Lock, AlertCircle, LogIn } from 'lucide-react'; // Ajout d'icônes
+import styles from './Login.module.css';
 
 export default function Login() {
   const router = useRouter();
@@ -26,35 +28,63 @@ export default function Login() {
       setError("Email ou mot de passe incorrect.");
       setLoading(false);
     } else {
-      router.push('/dashboard'); // On redirige vers le tableau de bord
-      router.refresh(); // Rafraîchit la page pour mettre à jour la navbar (on verra ça après)
+      router.push('/dashboard');
+      router.refresh();
     }
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center text-green-800 mb-6">Connexion</h1>
+    <main className={styles.pageContainer}>
+      <div className={styles.loginCard}>
         
-        {error && <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-sm">{error}</div>}
+        {/* En-tête de la carte */}
+        <div className={styles.header}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+            <div style={{ 
+              background: '#dcfce7', 
+              padding: '12px', 
+              borderRadius: '50%', 
+              color: '#15803d' 
+            }}>
+              <LogIn size={32} />
+            </div>
+          </div>
+          <h1 className={styles.title}>Bon retour !</h1>
+          <p className={styles.subtitle}>Connectez-vous pour accéder à votre espace membre ANEM.</p>
+        </div>
+        
+        {/* Message d'erreur */}
+        {error && (
+          <div className={styles.errorBox}>
+            <AlertCircle size={18} />
+            {error}
+          </div>
+        )}
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+        {/* Formulaire */}
+        <form onSubmit={handleLogin} className={styles.form}>
+          
+          <div className={styles.inputGroup}>
+            <label className={styles.label} htmlFor="email">Email</label>
             <input 
+              id="email"
               type="email" 
               required
-              className="mt-1 w-full p-2 border rounded focus:ring-2 focus:ring-green-500"
+              placeholder="exemple@email.com"
+              className={styles.input}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Mot de passe</label>
+
+          <div className={styles.inputGroup}>
+            <label className={styles.label} htmlFor="password">Mot de passe</label>
             <input 
+              id="password"
               type="password" 
               required
-              className="mt-1 w-full p-2 border rounded focus:ring-2 focus:ring-green-500"
+              placeholder="••••••••"
+              className={styles.input}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -63,14 +93,17 @@ export default function Login() {
           <button 
             type="submit" 
             disabled={loading}
-            className="w-full bg-orange-500 text-white py-2 rounded hover:bg-orange-600 transition disabled:opacity-50"
+            className={styles.submitButton}
           >
-            {loading ? 'Connexion...' : "Se connecter"}
+            {loading ? 'Connexion en cours...' : "Se connecter"}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-sm text-gray-600">
-          Pas encore de compte ? <Link href="/register" className="text-green-700 hover:underline">Créer un compte</Link>
+        <p className={styles.footerText}>
+          Pas encore de compte ?{' '}
+          <Link href="/register" className={styles.link}>
+            Créer un compte
+          </Link>
         </p>
       </div>
     </main>

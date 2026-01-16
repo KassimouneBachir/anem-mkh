@@ -3,85 +3,114 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
+import { Loader2, Check, X } from 'lucide-react';
 
-export default function EventButton({ eventId }: { eventId: any }) {
+export default function EventButton({ eventId }: { eventId: string | number }) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [isRegistered, setIsRegistered] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [actionBusy, setActionBusy] = useState(false);
 
-  // 1. Au chargement, on vérifie si l'user est déjà inscrit
   useEffect(() => {
+    let mounted = true;
     const checkRegistration = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!mounted) return;
+        if (!user) {
+          setUserId(null);
+          setLoading(false);
+          return;
+        }
+        setUserId(user.id);
+
+        const { data, error } = await supabase
+          .from('event_participants')
+          .select('id')
+          .eq('event_id', eventId)
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (error) throw error;
+        setIsRegistered(!!data);
+      } catch (err) {
+        console.error('checkRegistration', err);
+      } finally {
         setLoading(false);
-        return;
       }
-      setUserId(user.id);
-
-      // On cherche si une ligne existe déjà dans la table participants
-      const { data } = await supabase
-        .from('event_participants')
-        .select('*')
-        .eq('event_id', eventId)
-        .eq('user_id', user.id)
-        .single();
-
-      if (data) setIsRegistered(true);
-      setLoading(false);
     };
 
     checkRegistration();
+    return () => { mounted = false; };
   }, [eventId]);
 
-  // 2. Action quand on clique
   const toggleRegistration = async () => {
     if (!userId) {
-      router.push('/login'); // Si pas connecté, on envoie au login
+      router.push('/login');
       return;
     }
 
-    setLoading(true);
+    setActionBusy(true);
+    // Optimistic UI
+    setIsRegistered(prev => !prev);
 
-    if (isRegistered) {
-      // DÉSINSCRIPTION : On supprime la ligne
-      await supabase
-        .from('event_participants')
-        .delete()
-        .eq('event_id', eventId)
-        .eq('user_id', userId);
-      
-      setIsRegistered(false);
-    } else {
-      // INSCRIPTION : On ajoute la ligne
-      await supabase
-        .from('event_participants')
-        .insert([{ event_id: eventId, user_id: userId }]);
-      
-      setIsRegistered(true);
+    try {
+      if (isRegistered) {
+        const { error } = await supabase
+          .from('event_participants')
+          .delete()
+          .eq('event_id', eventId)
+          .eq('user_id', userId);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('event_participants')
+          .insert([{ event_id: eventId, user_id: userId }]);
+        if (error) throw error;
+      }
+      // optionally refresh counts
+      router.refresh();
+    } catch (err) {
+      // revert optimistic
+      setIsRegistered(prev => !prev);
+      console.error('toggleRegistration', err);
+    } finally {
+      setActionBusy(false);
     }
-    
-    setLoading(false);
-    router.refresh(); // Rafraîchit la page pour mettre à jour les compteurs si besoin
   };
 
-  if (loading) return <button className="bg-gray-200 text-gray-500 px-6 py-2 rounded-lg animate-pulse">Chargement...</button>;
+  if (loading) {
+    return (
+      <button className="inline-flex items-center gap-2 px-6 py-2 rounded-lg bg-gray-100 text-gray-500 animate-pulse" disabled>
+        <Loader2 size={16} className="animate-spin" /> Chargement...
+      </button>
+    );
+  }
 
   return (
     <button
       onClick={toggleRegistration}
-      className={`px-8 py-3 rounded-lg font-bold transition shadow-lg flex items-center gap-2 ${
+      disabled={actionBusy}
+      className={`inline-flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition shadow-md ${
         isRegistered
-          ? "bg-red-100 text-red-600 hover:bg-red-200 border border-red-200"
-          : "bg-orange-500 text-white hover:bg-orange-600"
-      }`}
+          ? 'bg-red-50 text-red-700 border border-red-100 hover:bg-red-100'
+          : 'bg-gradient-to-r from-orange-500 to-orange-400 text-white hover:from-orange-600 hover:to-orange-500'
+      } ${actionBusy ? 'opacity-80 cursor-wait' : ''}`}
     >
-      {isRegistered ? (
-        <>✖ Je ne viens plus</>
+      {actionBusy ? (
+        <>
+          <Loader2 size={16} className="animate-spin" />
+          {isRegistered ? 'Traitement...' : 'Traitement...'}
+        </>
+      ) : isRegistered ? (
+        <>
+          <X size={16} /> Je ne viens plus
+        </>
       ) : (
-        <>✅ Je participe</>
+        <>
+          <Check size={16} /> ✅ Je participe
+        </>
       )}
     </button>
   );
